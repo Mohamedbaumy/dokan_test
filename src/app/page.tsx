@@ -1,6 +1,8 @@
+"use client";
+import { useState, useRef } from "react";
 import PaymentHeader from "../components/PaymentHeader";
 import PaymentMethodSelector from "../components/PaymentMethodSelector";
-import CardForm from "../components/CardForm";
+import CardForm, { CardFormRef } from "../components/CardForm";
 import OrderSummary from "../components/OrderSummary";
 import PaymentFooter from "../components/PaymentFooter";
 import topRight from "../assets/top_right.svg";
@@ -16,6 +18,41 @@ export default function Home() {
     seller: "Dokan Tab",
     description:
       "Platform for live broadcasting solutions and content creation",
+  };
+
+  // Payment states
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+  // Ref to access CardForm methods
+  const cardFormRef = useRef<CardFormRef>(null);
+
+  const handlePayment = async () => {
+    // Validate form and show errors if invalid
+    const isValid = cardFormRef.current?.validateAndShowErrors();
+
+    if (!isValid) {
+      return;
+    }
+
+    setIsProcessing(true);
+
+    // Simulate payment processing delay
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    setIsProcessing(false);
+    setIsSuccess(true);
+    setShowModal(true);
+
+    // Reset form after successful payment
+    cardFormRef.current?.resetForm();
+
+    // Auto close success modal after 3 seconds
+    setTimeout(() => {
+      setShowModal(false);
+      setIsSuccess(false);
+    }, 3000);
   };
 
   return (
@@ -58,7 +95,7 @@ export default function Home() {
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 lg:gap-6">
               <div className="xl:col-span-2 space-y-[18px]">
                 <PaymentMethodSelector />
-                <CardForm />
+                <CardForm ref={cardFormRef} />
               </div>
               <div className="xl:col-span-1">
                 <OrderSummary
@@ -66,6 +103,11 @@ export default function Home() {
                   invoice={orderData.invoice}
                   seller={orderData.seller}
                   description={orderData.description}
+                  onPayment={handlePayment}
+                  isProcessing={isProcessing}
+                  isSuccess={isSuccess}
+                  showModal={showModal}
+                  onCloseModal={() => setShowModal(false)}
                 />
               </div>
             </div>
