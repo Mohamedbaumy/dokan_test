@@ -66,7 +66,6 @@ const CardForm = forwardRef<CardFormRef, CardFormProps>(
     const [errors, setErrors] = useState<FormErrors>(initialErrors);
     const [touched, setTouched] = useState(initialTouched);
 
-    // Expose reset function to parent
     useImperativeHandle(ref, () => ({
       resetForm: () => {
         setFormData(initialFormData);
@@ -74,7 +73,6 @@ const CardForm = forwardRef<CardFormRef, CardFormProps>(
         setTouched(initialTouched);
       },
       validateAndShowErrors: () => {
-        // Mark all fields as touched so errors show
         setTouched({
           cardholderName: true,
           cardNumber: true,
@@ -82,7 +80,6 @@ const CardForm = forwardRef<CardFormRef, CardFormProps>(
           cvc: true,
         });
 
-        // Validate all fields and update errors
         const nameValidation = validateCardholderName(formData.cardholderName);
         const cardValidation = validateCardNumber(formData.cardNumber);
         const expiryValidation = validateExpiryDate(formData.expiryDate);
@@ -95,7 +92,6 @@ const CardForm = forwardRef<CardFormRef, CardFormProps>(
           cvc: cvcValidation,
         });
 
-        // Return true if all fields are valid
         return (
           nameValidation.isValid &&
           cardValidation.isValid &&
@@ -105,12 +101,10 @@ const CardForm = forwardRef<CardFormRef, CardFormProps>(
       },
     }));
 
-    // Notify parent of form changes
     useEffect(() => {
       onFormChange?.(formData);
     }, [formData, onFormChange]);
 
-    // Notify parent of validation changes
     useEffect(() => {
       const allFieldsValid = Object.values(errors).every(
         (error) => error.isValid

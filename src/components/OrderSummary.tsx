@@ -107,7 +107,6 @@ export default function OrderSummary({
         </button>
       </div>
 
-      {/* Success Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-gradient-to-b from-[#272727] to-[#151515] border border-white/10 rounded-xl p-6 max-w-md w-full text-center space-y-4">
